@@ -130,7 +130,6 @@
             80% { opacity: 1; }
             100% { opacity: 0; }
         }
-        /* Mobile optimization */
         @media (max-width: 640px) {
             .container {
                 padding-left: 0.5rem !important;
@@ -150,7 +149,6 @@
                 font-size: 1rem !important;
             }
         }
-        /* Modal styles */
         .modal-bg {
             display: none;
             position: fixed;
@@ -228,6 +226,10 @@
                 padding: 0.8rem;
             }
             .modal-chart { height: 220px;}
+        }
+        /* Hide modal canvas on desktop */
+        @media (min-width: 768px) {
+            #chartModal { display: none !important; }
         }
     </style>
 </head>
@@ -440,7 +442,6 @@
         function drawChart(data) {
             if (chart) chart.destroy();
             const ctx = document.getElementById('monthlyResultChart');
-            // Only draw if canvas exists
             if (ctx) {
                 chart = new Chart(ctx, {
                     type: 'bar',
@@ -518,11 +519,11 @@
             var openChartDetailBtn = document.getElementById('openChartDetailBtn');
             var chartModal = document.getElementById('chartModal');
             var closeChartModal = document.getElementById('closeChartModal');
-            var modalChartCtx = document.getElementById('modalChartCanvas').getContext('2d');
+            var modalChartCtx = document.getElementById('modalChartCanvas')?.getContext('2d');
             let modalChartInstance;
 
             function drawModalChart() {
-                // Destroy previous if exists
+                if (!modalChartCtx) return;
                 if (modalChartInstance) modalChartInstance.destroy();
                 modalChartInstance = new Chart(modalChartCtx, {
                     type: 'bar',
@@ -547,13 +548,11 @@
                 });
             }
 
-            // Open modal animation
             function openModal() {
                 chartModal.classList.add('active');
                 drawModalChart();
                 document.body.style.overflow = 'hidden';
             }
-            // Close modal
             function closeModal() {
                 chartModal.classList.remove('active');
                 document.body.style.overflow = '';
@@ -565,20 +564,18 @@
             if (closeChartModal) {
                 closeChartModal.addEventListener('click', closeModal);
             }
-            // Close on background click outside modal content
             chartModal.addEventListener('click', function(e) {
                 if (e.target === chartModal) closeModal();
             });
-            // ESC key
             document.addEventListener('keydown', function(e){
                 if (chartModal.classList.contains('active') && e.key === 'Escape') closeModal();
             });
         });
 
-        // Sparkle generator
+        // Sparkle generator FIXED SVG (no code leak)
         function createSparkle(card) {
             const sparkle = document.createElement('img');
-            sparkle.src = "data:image/svg+xml;utf8,<svg width='22' height='22' xmlns='http://www.w3.org/2000/svg'><g><ellipse cx='11' cy='11' rx='7' ry='7' fill='%23FF69B4' opacity='0.7'/><ellipse cx='11' cy='11' rx='2' ry='2' fill='%23fff' opacity='0.7'/></g></svg>";
+            sparkle.src = "data:image/svg+xml;utf8,<svg width='22' height='22' xmlns='http://www.w3.org/2000/svg'><ellipse cx='11' cy='11' rx='7' ry='7' fill='%23FF69B4' opacity='0.7'/><ellipse cx='11' cy='11' rx='3' ry='3' fill='%2340E0D0' opacity='0.8'/></svg>";
             sparkle.className = "sparkle";
             sparkle.style.left = `${Math.random()*80+10}%`;
             sparkle.style.top = `${Math.random()*60+20}%`;
