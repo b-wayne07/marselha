@@ -193,6 +193,9 @@
             fill: #40E0D0;
             animation: bounceArrow 1.2s infinite;
         }
+        .conclusion-card {
+            background-color: #2D3748;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
@@ -333,7 +336,7 @@
             </div>
         </section>
 
-        <section id="comparison-chart" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
+        <section id="comparison-chart-section" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-white">Onde o Dinheiro Foi Gasto (ou Deixou de Ser Gasto)</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
                 O gráfico abaixo compara as três despesas mais críticas. Note como os gastos foram represados em Abril e explodiram em Maio, quando as contas acumuladas tiveram que ser pagas.
@@ -387,72 +390,13 @@
             gray: '#6B7280'
         };
 
-        const tooltipTitleCallback = (tooltipItems) => {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) label = label.join(' ');
-            return label;
-        };
-        
-        const commonChartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        title: tooltipTitleCallback,
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) label += ': ';
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
-                            }
-                            return label;
-                        }
-                    },
-                    backgroundColor: '#1F2937',
-                    titleColor: '#FFFFFF',
-                    bodyColor: '#D1D5DB',
-                    titleFont: { size: 16, weight: 'bold' },
-                    bodyFont: { size: 14 },
-                    padding: 12,
-                    cornerRadius: 6,
-                    displayColors: false
-                }
-            },
-            scales: {
-                y: {
-                    ticks: { 
-                        color: FONT_COLOR, 
-                        font: { size: 12 },
-                        callback: function(value, index, values) {
-                            if (value >= 1000 || value <= -1000) {
-                                return 'R$ ' + (value / 1000) + 'k';
-                            }
-                            return 'R$ ' + value;
-                        }
-                    },
-                    grid: { color: GRID_COLOR }
-                },
-                x: {
-                    ticks: { 
-                        color: FONT_COLOR, 
-                        font: { size: 12 }
-                    },
-                    grid: { color: 'transparent' }
-                }
-            }
-        };
-
         const monthlyDataOrig = [-83957.32, -75516.75, -60723.64, 1667.26, 13847.68, 5584.27, -6078.40, -8615.59, -8322.61, 50625.39, -45009.87, -551.81];
         const backgroundColors = monthlyDataOrig.map(value => value >= 0 ? 'rgba(64, 224, 208, 0.6)' : 'rgba(255, 105, 180, 0.6)');
         const borderColors = monthlyDataOrig.map(value => value >= 0 ? 'rgba(64, 224, 208, 1)' : 'rgba(255, 105, 180, 1)');
 
-        let chart;
         function drawChart(data) {
-            if (chart) chart.destroy();
-            chart = new Chart(document.getElementById('monthlyResultChart'), {
+            if (window.monthlyChart) window.monthlyChart.destroy();
+            window.monthlyChart = new Chart(document.getElementById('monthlyResultChart'), {
                 type: 'bar',
                 data: {
                     labels: ['Jul/24', 'Ago/24', 'Set/24', 'Out/24', 'Nov/24', 'Dez/24', 'Jan/25', 'Fev/25', 'Mar/25', 'Abr/25', 'Mai/25', 'Jun/25'],
@@ -465,33 +409,70 @@
                         borderRadius: 4
                     }]
                 },
-                options: { ...commonChartOptions }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) label = label.join(' ');
+                                    return label;
+                                },
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            },
+                            backgroundColor: '#1F2937',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#D1D5DB',
+                            titleFont: { size: 16, weight: 'bold' },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 6,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: FONT_COLOR, 
+                                font: { size: 12 },
+                                callback: function(value, index, values) {
+                                    if (value >= 1000 || value <= -1000) {
+                                        return 'R$ ' + (value / 1000) + 'k';
+                                    }
+                                    return 'R$ ' + value;
+                                }
+                            },
+                            grid: { color: GRID_COLOR }
+                        },
+                        x: {
+                            ticks: { 
+                                color: FONT_COLOR, 
+                                font: { size: 12 }
+                            },
+                            grid: { color: 'transparent' }
+                        }
+                    }
+                }
             });
         }
-        drawChart(monthlyDataOrig);
 
-        // Chart animation button
-        function animateChart() {
-            let steps = 40, frame = 0;
-            let current = Array(monthlyDataOrig.length).fill(0);
-            let increments = monthlyDataOrig.map(val => val/steps);
-            function step() {
-                if (frame < steps) {
-                    current = current.map((val, idx) => val + increments[idx]);
-                    drawChart(current);
-                    frame++;
-                    requestAnimationFrame(step);
-                } else {
-                    drawChart(monthlyDataOrig);
-                }
-            }
-            step();
-        }
+        drawChart(monthlyDataOrig);
 
         // KPI Number Animation
         function animateNumber(id, targetValue, prefix = '', duration = 1200) {
             const el = document.getElementById(id);
-            let start = 0, startTime = null, sign = targetValue < 0 ? '-' : '+';
+            let startTime = null, sign = targetValue < 0 ? '-' : '+';
             targetValue = Math.abs(targetValue);
             function format(val) {
                 return `${sign} R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
@@ -510,8 +491,7 @@
             requestAnimationFrame(tick);
         }
 
-        // Animate KPIs on load and on hover
-        window.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             animateNumber("deficit-value", -288775.99, '-', 1500);
             animateNumber("superavit-value", 71724.60, '+', 1500);
             animateNumber("total-deficit-value", -217051.39, '-', 1500);
@@ -527,129 +507,7 @@
             var chartOverlay = document.querySelector('.chart-overlay');
             var openChartDetailBtn = document.getElementById('openChartDetailBtn');
             function openChartDetail() {
-                // Open a new tab with a full-page chart and more details
-                var chartWin = window.open('', '_blank');
-                chartWin.document.write(`
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Gráfico Detalhado - Diagnóstico Financeiro Marselha</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { 
-            background: radial-gradient(ellipse at top left, #2d3748 60%, #1a202c 100%);
-            color: #E5E7EB; font-family: 'Inter', sans-serif; margin:0; padding:0; 
-        }
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        h1 { text-align:center; margin-top:1.5rem; font-size:2rem; font-weight:900; color:#FF69B4;}
-        .chart-detail { width:100%; height: 700px; margin:2rem auto 0 auto; background:#23272f; border-radius:1rem; box-shadow:0 6px 28px -6px #FF69B4;}
-        .desc { text-align:center; font-size:1.15rem; color:#A0AEC0; margin-top:1rem;}
-        .summary { max-width:800px; margin:2rem auto; background:rgba(255,255,255,0.03); padding:1rem 2rem; border-radius:0.5rem; color:#FFD700;}
-        @media (max-width:700px) {
-            .chart-detail { height:400px; }
-            .container { padding: 0.5rem; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Balanço Anual: Déficit vs. Superávit</h1>
-        <div class="desc">
-            Visualização ampliada e detalhada do resultado mensal do condomínio Marselha. Passe o mouse sobre as barras para ver valores exatos.
-        </div>
-        <div class="summary">
-            <strong>Resumo:</strong><br>
-            Foram <span style="color:#FF69B4;font-weight:bold;">9 meses de déficit</span> e <span style="color:#40E0D0;font-weight:bold;">3 meses de superávit</span>.<br>
-            Déficit total do período: <span style="color:#FF8C00;font-weight:bold;">- R$ 217.051,39</span>
-        </div>
-        <div class="chart-detail">
-            <canvas id="chartDetailCanvas"></canvas>
-        </div>
-    </div>
-    <script>
-        const monthlyDataOrig = [-83957.32, -75516.75, -60723.64, 1667.26, 13847.68, 5584.27, -6078.40, -8615.59, -8322.61, 50625.39, -45009.87, -551.81];
-        const backgroundColors = monthlyDataOrig.map(value => value >= 0 ? 'rgba(64, 224, 208, 0.6)' : 'rgba(255, 105, 180, 0.6)');
-        const borderColors = monthlyDataOrig.map(value => value >= 0 ? 'rgba(64, 224, 208, 1)' : 'rgba(255, 105, 180, 1)');
-        const FONT_COLOR = '#E5E7EB';
-        const GRID_COLOR = '#4B5563';
-
-        const tooltipTitleCallback = (tooltipItems) => {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) return label.join(' ');
-            return label;
-        };
-        const chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        title: tooltipTitleCallback,
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) label += ': ';
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
-                            }
-                            return label;
-                        }
-                    },
-                    backgroundColor: '#1F2937',
-                    titleColor: '#FFFFFF',
-                    bodyColor: '#D1D5DB',
-                    titleFont: { size: 16, weight: 'bold' },
-                    bodyFont: { size: 14 },
-                    padding: 12,
-                    cornerRadius: 6,
-                    displayColors: false
-                }
-            },
-            scales: {
-                y: {
-                    ticks: { 
-                        color: FONT_COLOR, 
-                        font: { size: 12 },
-                        callback: function(value) {
-                            if (value >= 1000 || value <= -1000) {
-                                return 'R$ ' + (value / 1000) + 'k';
-                            }
-                            return 'R$ ' + value;
-                        }
-                    },
-                    grid: { color: GRID_COLOR }
-                },
-                x: {
-                    ticks: { 
-                        color: FONT_COLOR, 
-                        font: { size: 12 }
-                    },
-                    grid: { color: 'transparent' }
-                }
-            }
-        };
-        new Chart(document.getElementById('chartDetailCanvas'), {
-            type: 'bar',
-            data: {
-                labels: ['Jul/24', 'Ago/24', 'Set/24', 'Out/24', 'Nov/24', 'Dez/24', 'Jan/25', 'Fev/25', 'Mar/25', 'Abr/25', 'Mai/25', 'Jun/25'],
-                datasets: [{
-                    label: 'Resultado Mensal (R$)',
-                    data: monthlyDataOrig,
-                    backgroundColor: backgroundColors,
-                    borderColor: borderColors,
-                    borderWidth: 2,
-                    borderRadius: 4
-                }]
-            },
-            options: chartOptions
-        });
-    </script>
-</body>
-</html>
-                `);
+                window.open('https://github.com/b-wayne07/marselha', '_blank');
             }
             if (chartOverlay) {
                 chartOverlay.addEventListener('click', openChartDetail);
@@ -662,11 +520,16 @@
 
         // Sparkle generator
         function createSparkle(card) {
-            const sparkle = document.createElement('img');
-            sparkle.src = "data:image/svg+xml;utf8,<svg width='22' height='22' xmlns='http://www.w3.org/2000/svg'><g><ellipse cx='11' cy='11' rx='7' ry='7' fill='%23FF69B4' opacity='0.7'/><ellipse cx='11' cy='11' rx='3' ry='3' fill='%2340E0D0' opacity='0.8'/></g></svg>";
+            const sparkle = document.createElement('span');
             sparkle.className = "sparkle";
             sparkle.style.left = `${Math.random()*80+10}%`;
             sparkle.style.top = `${Math.random()*60+20}%`;
+            sparkle.style.position = "absolute";
+            sparkle.style.width = "22px";
+            sparkle.style.height = "22px";
+            sparkle.style.background = "radial-gradient(circle, #FF69B4 60%, #40E0D0 100%)";
+            sparkle.style.borderRadius = "50%";
+            sparkle.style.opacity = "0.7";
             card.appendChild(sparkle);
             setTimeout(() => { sparkle.remove(); }, 1100);
         }
@@ -769,7 +632,7 @@
             }
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             if(document.getElementById('comparisonChart')) {
                 new Chart(document.getElementById('comparisonChart'), {
                     type: 'bar',
