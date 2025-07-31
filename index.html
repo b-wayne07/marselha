@@ -196,6 +196,76 @@
         .conclusion-card {
             background-color: #2D3748;
         }
+        /* Modal styles */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            left: 0; top: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(31,41,55,0.93);
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.2s;
+        }
+        .modal-bg.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #23272f;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 28px -8px #FF69B4;
+            padding: 1.5rem 1rem 1rem 1rem;
+            max-width: 98vw;
+            max-height: 98vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .modal-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #FF69B4;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #FF69B4;
+            color: white;
+            font-weight: bold;
+            border-radius: 999px;
+            padding: 0.25rem 0.8rem;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .modal-close:hover {
+            background: #40E0D0;
+        }
+        .modal-chart-container {
+            width: 100vw; /* allow max width on mobile */
+            max-width: 700px;
+            max-height: 70vh;
+            height: 60vh;
+            background: #23272f;
+            border-radius: 1rem;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (orientation: landscape) {
+            .modal-chart-container {
+                max-height: 90vh;
+                height: 80vh;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
@@ -247,7 +317,8 @@
                 <button id="openChartDetailBtn" type="button" class="interactive-btn">
                     Ver Gráfico em Tela Cheia
                 </button>
-                <p class="text-xs text-gray-400 mt-2">Toque no gráfico ou no botão acima para abrir uma versão detalhada.</p>
+                <p class="text-xs text-gray-400 mt-2">Toque no gráfico ou no botão acima para abrir uma versão detalhada.<br>
+                Vire o celular na horizontal para melhor análise.</p>
             </div>
         </section>
 
@@ -370,6 +441,20 @@
                 Em resumo: o déficit de Maio foi o resultado direto e inevitável do represamento artificial de despesas em Abril. Essa prática demonstra uma total falta de planejamento financeiro e transparência.
             </p>
         </section>
+
+        <!-- Modal for full screen chart -->
+        <div id="modal-bg" class="modal-bg" tabindex="-1" aria-modal="true" role="dialog">
+            <div class="modal-content">
+                <button class="modal-close" type="button" id="modalCloseBtn" aria-label="Fechar">×</button>
+                <div class="modal-header">Gráfico Detalhado: Déficit vs. Superávit</div>
+                <div class="modal-chart-container">
+                    <canvas id="modalChart"></canvas>
+                </div>
+                <div class="text-center text-sm text-gray-400 mt-2">
+                    Vire o celular na horizontal para melhor visualização.
+                </div>
+            </div>
+        </div>
 
     </main>
 
@@ -506,16 +591,122 @@
             // Chart overlay for tap/click
             var chartOverlay = document.querySelector('.chart-overlay');
             var openChartDetailBtn = document.getElementById('openChartDetailBtn');
-            function openChartDetail() {
-                window.open('https://github.com/b-wayne07/marselha', '_blank');
+            var modalBg = document.getElementById('modal-bg');
+            var modalCloseBtn = document.getElementById('modalCloseBtn');
+            var modalChartCanvas = document.getElementById('modalChart');
+            let modalChartInstance = null;
+
+            function openChartModal() {
+                // Show modal
+                modalBg.classList.add('active');
+                // Destroy previous chart instance if needed
+                if (modalChartInstance) {
+                    modalChartInstance.destroy();
+                    modalChartInstance = null;
+                }
+                // Render enlarged chart in modal
+                modalChartInstance = new Chart(modalChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jul/24', 'Ago/24', 'Set/24', 'Out/24', 'Nov/24', 'Dez/24', 'Jan/25', 'Fev/25', 'Mar/25', 'Abr/25', 'Mai/25', 'Jun/25'],
+                        datasets: [{
+                            label: 'Resultado Mensal (R$)',
+                            data: monthlyDataOrig,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        if (Array.isArray(label)) label = label.join(' ');
+                                        return label;
+                                    },
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                },
+                                backgroundColor: '#1F2937',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#D1D5DB',
+                                titleFont: { size: 16, weight: 'bold' },
+                                bodyFont: { size: 14 },
+                                padding: 12,
+                                cornerRadius: 6,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { 
+                                    color: FONT_COLOR, 
+                                    font: { size: 16 },
+                                    callback: function(value, index, values) {
+                                        if (value >= 1000 || value <= -1000) {
+                                            return 'R$ ' + (value / 1000) + 'k';
+                                        }
+                                        return 'R$ ' + value;
+                                    }
+                                },
+                                grid: { color: GRID_COLOR }
+                            },
+                            x: {
+                                ticks: { 
+                                    color: FONT_COLOR, 
+                                    font: { size: 15 }
+                                },
+                                grid: { color: 'transparent' }
+                            }
+                        }
+                    }
+                });
             }
+
+            function closeChartModal() {
+                modalBg.classList.remove('active');
+                if (modalChartInstance) {
+                    modalChartInstance.destroy();
+                    modalChartInstance = null;
+                }
+            }
+
+            // Button & overlay triggers modal
             if (chartOverlay) {
-                chartOverlay.addEventListener('click', openChartDetail);
-                chartOverlay.addEventListener('touchstart', function(e) { openChartDetail(); e.preventDefault(); });
+                chartOverlay.addEventListener('click', openChartModal);
+                chartOverlay.addEventListener('touchstart', function(e) { openChartModal(); e.preventDefault(); });
             }
             if (openChartDetailBtn) {
-                openChartDetailBtn.addEventListener('click', openChartDetail);
+                openChartDetailBtn.addEventListener('click', openChartModal);
             }
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeChartModal);
+            }
+            // ESC key closes modal
+            document.addEventListener('keydown', function(e){
+                if (modalBg.classList.contains('active') && (e.key === "Escape" || e.key === "Esc")) {
+                    closeChartModal();
+                }
+            });
+            // Click outside modal closes
+            modalBg.addEventListener('click', function(e){
+                if (e.target === modalBg) {
+                    closeChartModal();
+                }
+            });
         });
 
         // Sparkle generator
