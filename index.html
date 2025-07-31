@@ -130,7 +130,6 @@
             80% { opacity: 1; }
             100% { opacity: 0; }
         }
-
         /* Mobile optimization */
         @media (max-width: 640px) {
             .container {
@@ -163,6 +162,37 @@
         .chart-overlay {
             display: none;
         }
+        /* Timeline effect */
+        .timeline-section {
+            border-top: 6px solid #40E0D0;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+        }
+        .timeline-label {
+            background: linear-gradient(90deg, #40E0D0 60%, #FF69B4 100%);
+            color: #1a202c;
+            font-weight: bold;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            display: inline-block;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 12px -2px #40E0D0, 0 1px 4px -1px #FF69B4;
+            margin-bottom: 2rem;
+        }
+        .timeline-arrow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+        }
+        .timeline-arrow svg {
+            width: 48px;
+            height: 48px;
+            fill: #40E0D0;
+            animation: bounceArrow 1.2s infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
@@ -176,10 +206,11 @@
 
     <main class="container mx-auto p-4 md:p-8">
 
+        <!-- INDEX.HTML CONTENT -->
         <section id="kpis" class="mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-white">Os últimos 12 meses</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                Os números do último ano (Jul/2024 a Jun/2025) mostram um cenário preocupante. O condomínio gastou consistentemente mais do que arrecadou, fechando o período com um déficit alarm[...]
+                Os números do último ano (Jul/2024 a Jun/2025) mostram um cenário preocupante. O condomínio gastou consistentemente mais do que arrecadou, fechando o período com um déficit alarmante.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="kpi-card kpi-orange p-6 rounded-lg shadow-xl" data-sparkle>
@@ -203,7 +234,7 @@
         <section id="volatility" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-white">Balanço Anual: Déficit vs. Superávit</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                O gráfico de colunas mostra a trajetória financeira do condomínio. Tivemos nove meses no vermelho (déficit) e apenas três no azul (superávit), que não foram suficientes para cob[...]
+                O gráfico de colunas mostra a trajetória financeira do condomínio. Tivemos nove meses no vermelho (déficit) e apenas três no azul (superávit), que não foram suficientes para cobrir os prejuízos acumulados.
             </p>
             <div class="chart-container" style="position:relative;">
                 <canvas id="monthlyResultChart"></canvas>
@@ -220,7 +251,7 @@
         <section id="red-flags" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-yellow-400">💡 Pontos de Atenção: Transações a Esclarecer</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                A análise dos últimos meses revela um padrão de pagamentos recorrentes e de alto valor a prestadores de serviço individuais. Essas transações, muitas vezes sem a clareza de contr[...]
+                A análise dos últimos meses revela um padrão de pagamentos recorrentes e de alto valor a prestadores de serviço individuais. Essas transações, muitas vezes sem a clareza de contrato ou nota fiscal, indicam oportunidades para melhorar a governança financeira.
             </p>
             <div class="space-y-4">
                 <div class="attention-card p-4 rounded-md flex items-center justify-between flex-wrap gap-4" data-interactive>
@@ -250,7 +281,7 @@
         <section id="action-plan" class="mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-white">Plano de Ação Estratégico para Recuperação</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                A reversão deste quadro exige ações enérgicas e imediatas. O plano a seguir estrutura o caminho para estancar a crise, reconstruir a governança e garantir a sustentabilidade finan[...]
+                A reversão deste quadro exige ações enérgicas e imediatas. O plano a seguir estrutura o caminho para estancar a crise, reconstruir a governança e garantir a sustentabilidade financeira do condomínio.
             </p>
             <div class="flex flex-col md:flex-row justify-between items-stretch gap-4">
                 <div class="flowchart-step" data-interactive>
@@ -270,16 +301,81 @@
             </div>
         </section>
 
+        <!-- TIMELINE DIVIDER -->
+        <section class="timeline-section">
+            <div class="text-center">
+                <span class="timeline-label">Análise Detalhada: Gangorra Financeira Abril vs Maio 2025</span>
+            </div>
+            <div class="timeline-arrow">
+                <svg viewBox="0 0 48 48">
+                    <path d="M24 8v32M24 40l-10-10M24 40l10-10" stroke="#40E0D0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- PEDALADA.HTML CONTENT -->
+        <section id="kpis-pedalada" class="mb-12">
+            <h2 class="text-3xl font-bold text-center mb-2 text-white">De um Extremo ao Outro</h2>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
+                A grande variação entre o superávit de Abril e o déficit de Maio não foi um acaso. Foi o resultado de um "empurrão com a barriga" de grandes despesas de um mês para o outro, criando um efeito artificial nos resultados.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="kpi-card kpi-green p-6 rounded-lg shadow-xl text-center">
+                    <h3 class="text-lg font-bold text-gray-300">Resultado de Abril/2025</h3>
+                    <p class="text-6xl font-black text-teal-400">+ R$ 50.625,39</p>
+                    <p class="text-gray-400 mt-2">Superávit Artificial</p>
+                </div>
+                <div class="kpi-card kpi-red p-6 rounded-lg shadow-xl text-center">
+                    <h3 class="text-lg font-bold text-gray-300">Resultado de Maio/2025</h3>
+                    <p class="text-6xl font-black text-red-400">- R$ 45.009,87</p>
+                    <p class="text-gray-400 mt-2">Déficit Explosivo</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison-chart" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
+            <h2 class="text-3xl font-bold text-center mb-2 text-white">Onde o Dinheiro Foi Gasto (ou Deixou de Ser Gasto)</h2>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
+                O gráfico abaixo compara as três despesas mais críticas. Note como os gastos foram represados em Abril e explodiram em Maio, quando as contas acumuladas tiveram que ser pagas.
+            </p>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+             <div class="mt-8 text-center bg-gray-900 p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-gray-300">Total de Despesas</h3>
+                <p class="text-4xl font-black text-orange-400">+67%</p>
+                <p class="text-gray-400 mt-2">O condomínio gastou <span class="font-bold text-white">R$ 105.158,17 a mais</span> em Maio do que em Abril.</p>
+            </div>
+        </section>
+
+        <section id="conclusion">
+            <h2 class="text-3xl font-bold text-center mb-2 text-white">Conclusão da Análise</h2>
+            <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
+                O superávit de Abril foi uma ilusão. Ele só existiu porque a gestão decidiu não pagar contas essenciais, o que gerou duas consequências graves:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="conclusion-card p-6 rounded-lg shadow-xl">
+                    <h3 class="text-2xl font-bold mb-4 text-orange-400 flex items-center"><span class="text-4xl mr-4">💣</span>"Bomba-Relógio" Ativada</h3>
+                    <p class="text-gray-300">As contas não pagas em Abril se acumularam e venceram em Maio, junto com as despesas normais daquele mês. Isso causou o rombo nas contas, pois o caixa não suportou o impacto.</p>
+                </div>
+                <div class="conclusion-card p-6 rounded-lg shadow-xl">
+                    <h3 class="text-2xl font-bold mb-4 text-red-400 flex items-center"><span class="text-4xl mr-4">💸</span>Custos Adicionais Gerados</h3>
+                    <p class="text-gray-300">O atraso no pagamento da manutenção dos elevadores, por exemplo, gerou a necessidade de um "acordo" de R$ 4.109,74. Acordos quase sempre significam o pagamento de juros e taxas extras.</p>
+                </div>
+            </div>
+            <p class="text-center text-gray-300 max-w-3xl mx-auto mt-8 text-lg bg-gray-800 p-4 rounded-lg">
+                Em resumo: o déficit de Maio foi o resultado direto e inevitável do represamento artificial de despesas em Abril. Essa prática demonstra uma total falta de planejamento financeiro e transparência.
+            </p>
+        </section>
+
     </main>
 
     <footer class="bg-gray-800 text-center p-4 mt-8">
         <p class="text-sm text-gray-500">&copy; 2025 Análise Gerada para o Condomínio Marselha. Todos os dados baseados nos relatórios financeiros de Julho de 2024 a Junho de 2025.</p>
-        <!-- Energetic & Playful Palette -->
-        <!-- All charts rendered using Chart.js and object animations are CSS/JS. -->
     </footer>
 
     <script>
-        // Chart.js setup
+        // Chart.js setup for index.html
         const FONT_COLOR = '#E5E7EB';
         const GRID_COLOR = '#4B5563';
         const PALETTE = {
@@ -294,9 +390,7 @@
         const tooltipTitleCallback = (tooltipItems) => {
             const item = tooltipItems[0];
             let label = item.chart.data.labels[item.dataIndex];
-            if (Array.isArray(label)) {
-                return label.join(' ');
-            }
+            if (Array.isArray(label)) label = label.join(' ');
             return label;
         };
         
@@ -569,7 +663,7 @@
         // Sparkle generator
         function createSparkle(card) {
             const sparkle = document.createElement('img');
-            sparkle.src = "data:image/svg+xml;utf8,<svg width='22' height='22' xmlns='http://www.w3.org/2000/svg'><g><ellipse cx='11' cy='11' rx='7' ry='7' fill='%23FF69B4' opacity='0.7'/><ellipse cx='11' cy='11' rx='3' ry='3' fill='%23fff' opacity='0.7'/></g></svg>";
+            sparkle.src = "data:image/svg+xml;utf8,<svg width='22' height='22' xmlns='http://www.w3.org/2000/svg'><g><ellipse cx='11' cy='11' rx='7' ry='7' fill='%23FF69B4' opacity='0.7'/><ellipse cx='11' cy='11' rx='3' ry='3' fill='%2340E0D0' opacity='0.8'/></g></svg>";
             sparkle.className = "sparkle";
             sparkle.style.left = `${Math.random()*80+10}%`;
             sparkle.style.top = `${Math.random()*60+20}%`;
@@ -597,6 +691,112 @@
                     document.body.style.background = 'radial-gradient(ellipse at top left, #2d3748 60%, #1a202c 100%)';
                 }, 1200);
             });
+        });
+
+        // Chart.js for pedalada.html (comparisonChart)
+        const PALETTE_PEDALADA = {
+            april: 'rgba(64, 224, 208, 0.8)', // Teal
+            may: 'rgba(255, 105, 180, 0.8)', // Pink
+            april_border: 'rgba(64, 224, 208, 1)',
+            may_border: 'rgba(255, 105, 180, 1)'
+        };
+        const comparisonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: FONT_COLOR,
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            }
+                            return label;
+                        },
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    },
+                    backgroundColor: '#1F2937',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#D1D5DB',
+                    titleFont: { size: 16, weight: 'bold' },
+                    bodyFont: { size: 14 },
+                    padding: 12,
+                    cornerRadius: 6,
+                    displayColors: true
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { 
+                        color: FONT_COLOR, 
+                        font: { size: 12 },
+                        callback: function(value, index, values) {
+                            if (value >= 1000 || value <= -1000) {
+                                return 'R$ ' + (value / 1000) + 'k';
+                            }
+                            return 'R$ ' + value;
+                        }
+                    },
+                    grid: { color: GRID_COLOR }
+                },
+                x: {
+                    ticks: { 
+                        color: FONT_COLOR, 
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    grid: { color: 'transparent' }
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if(document.getElementById('comparisonChart')) {
+                new Chart(document.getElementById('comparisonChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Água e Esgoto', 'Limpeza/Portaria', 'Manut. Elevadores'],
+                        datasets: [
+                            {
+                                label: 'Gasto em Abril/25',
+                                data: [22764.55, 30000.00, 0],
+                                backgroundColor: PALETTE_PEDALADA.april,
+                                borderColor: PALETTE_PEDALADA.april_border,
+                                borderWidth: 2,
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Gasto em Maio/25',
+                                data: [98429.98, 61963.23, 16130.43],
+                                backgroundColor: PALETTE_PEDALADA.may,
+                                borderColor: PALETTE_PEDALADA.may_border,
+                                borderWidth: 2,
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: comparisonChartOptions
+                });
+            }
         });
     </script>
 </body>
