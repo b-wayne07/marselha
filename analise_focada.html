@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Financeiro | Condomínio Marselha - Jul 2024 a Jun 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at top left, #2d3748 60%, #1a202c 100%);
+            transition: background 1s;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            animation: fadeInUp 1.5s cubic-bezier(.59,.27,.62,.99);
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 500px; }
+        }
+        .kpi-card {
+            background: linear-gradient(135deg, #23272f 80%, #1a202c 100%);
+            border-left: 5px solid;
+            transition: transform 0.4s cubic-bezier(.59,.27,.62,.99), box-shadow 0.4s cubic-bezier(.59,.27,.62,.99);
+            cursor: pointer;
+            will-change: transform;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card:hover {
+            transform: translateY(-12px) scale(1.05);
+            box-shadow: 0 18px 22px -6px rgba(0,0,0,0.18), 0 8px 12px -4px rgba(0,0,0,0.08);
+        }
+        .kpi-card:after {
+            content: '';
+            position: absolute;
+            bottom: -40px; right: -40px;
+            width: 80px; height: 80px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .kpi-orange { border-color: #FF69B4; }
+        .kpi-green { border-color: #40E0D0; }
+        .kpi-red { border-color: #FF8C00; }
+        .flowchart-step {
+            border: 2px solid #4A5568;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            background: linear-gradient(120deg, #2D3748 80%, #23272f 100%);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 4px 20px -8px #000;
+            position: relative;
+            overflow: hidden;
+        }
+        .flowchart-step:before {
+            content: '';
+            position: absolute;
+            top: -25px; left: -25px;
+            width: 50px; height: 50px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .flowchart-arrow {
+            font-size: 2.5rem;
+            color: #FF69B4;
+            margin: 1.5rem 0;
+            align-self: center;
+            transition: transform 0.4s cubic-bezier(.59,.27,.62,.99);
+            animation: bounceArrow 1.2s infinite;
+        }
+        .attention-card {
+            background: linear-gradient(90deg, #FEFCE8 80%, #fffbe6 100%);
+            border-left: 4px solid #FBBF24;
+            transition: box-shadow 0.4s;
+            animation: fadeInRight 1.2s cubic-bezier(.59,.27,.62,.99);
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(60px);}
+            100% { opacity: 1; transform: translateY(0);}
+        }
+        @keyframes fadeInRight {
+            0% { opacity: 0; transform: translateX(60px);}
+            100% { opacity: 1; transform: translateX(0);}
+        }
+        @keyframes bounceArrow {
+            0%,100% { transform: translateY(0);}
+            50% { transform: translateY(-10px);}
+        }
+        .interactive-btn {
+            background: linear-gradient(90deg, #FF69B4 60%, #40E0D0 100%);
+            color: #fff;
+            font-weight: bold;
+            border-radius: 9999px;
+            padding: 0.75rem 2.5rem;
+            box-shadow: 0 2px 12px -2px #FF69B4, 0 1px 4px -1px #40E0D0;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .interactive-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px -4px #FF69B4, 0 2px 8px -2px #40E0D0;
+        }
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            width: 22px;
+            height: 22px;
+            opacity: 0.7;
+            z-index: 9999;
+            animation: sparkleFade 1.2s forwards;
+        }
+        @keyframes sparkleFade {
+            0% { opacity: 0.8; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        /* Mobile optimization */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            .chart-container {
+                height: 280px;
+                min-width: 0;
+                max-width: 100vw;
+            }
+            .kpi-card {
+                padding: 1.25rem !important;
+                font-size: 1rem !important;
+            }
+            .flowchart-step {
+                min-width: 0;
+                font-size: 1rem !important;
+            }
+            .chart-overlay {
+                display: block;
+                position: absolute;
+                top: 0; left: 0; width: 100%; height: 100%;
+                cursor: pointer;
+                z-index: 10;
+                background: rgba(0,0,0,0);
+            }
+        }
+        /* Desktop overlay indicator */
+        .chart-overlay {
+            display: none;
+        }
+        /* Timeline effect */
+        .timeline-section {
+            border-top: 6px solid #40E0D0;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+        }
+        .timeline-label {
+            background: linear-gradient(90deg, #40E0D0 60%, #FF69B4 100%);
+            color: #1a202c;
+            font-weight: bold;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            display: inline-block;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 12px -2px #40E0D0, 0 1px 4px -1px #FF69B4;
+            margin-bottom: 2rem;
+        }
+        .timeline-arrow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+        }
+        .timeline-arrow svg {
+            width: 48px;
+            height: 48px;
+            fill: #40E0D0;
+            animation: bounceArrow 1.2s infinite;
+        }
+        .conclusion-card {
+            background-color: #2D3748;
+        }
+        /* Modal styles */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            left: 0; top: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(31,41,55,0.93);
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.2s;
+        }
+        .modal-bg.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #23272f;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 28px -8px #FF69B4;
+            padding: 1.5rem 1rem 1rem 1rem;
+            max-width: 98vw;
+            max-height: 98vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .modal-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #FF69B4;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #FF69B4;
+            color: white;
+            font-weight: bold;
+            border-radius: 999px;
+            padding: 0.25rem 0.8rem;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .modal-close:hover {
+            background: #40E0D0;
+        }
+        .modal-chart-container {
+            width: 100vw; /* allow max width on mobile */
+            max-width: 700px;
+            max-height: 70vh;
+            height: 60vh;
+            background: #23272f;
+            border-radius: 1rem;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (orientation: landscape) {
+            .modal-chart-container {
+                max-height: 90vh;
+                height: 80vh;
+            }
+        }
+        /* ANALISE FINANCEIRA BLOCOS */
+        .analise-timeline-section {
+            border-top: 6px solid #FF69B4;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+            background: linear-gradient(120deg, #23272f 70%, #1a202c 100%);
+        }
+        .analise-timeline-label {
+            background: linear-gradient(90deg, #FF69B4 60%, #40E0D0 100%);
+            color: #1a202c;
+            font-weight: bold;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            display: inline-block;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 12px -2px #FF69B4, 0 1px 4px -1px #40E0D0;
+            margin-bottom: 2rem;
+        }
+        .analise-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0 2rem 0;
+            background: #f8fafd;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .analise-table th, .analise-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            font-size: 1rem;
+            text-align: left;
+        }
+        .analise-table th {
+            background: #40E0D0;
+            color: #1a202c;
+            font-weight: bold;
+        }
+        .analise-table tr:nth-child(even) td {
+            background: #f1f5f9;
+        }
+        .analise-table tr:nth-child(odd) td {
+            background: #f8fafd;
+        }
+        .analise-bloco {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            background: #fff;
+            color: #23272f;
+            border-radius: 1rem;
+            box-shadow: 0 6px 28px -6px #40E0D0;
+            padding: 2rem 1.5rem;
+        }
+        .analise-bloco h1, .analise-bloco h2, .analise-bloco h3 {
+            color: #FF69B4;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            margin-bottom: 1.25rem;
+        }
+        .analise-bloco h2 {
+            color: #40E0D0;
+            font-size: 1.5rem;
+        }
+        .analise-bloco h3 {
+            color: #FF69B4;
+            font-size: 1.25rem;
+        }
+        .analise-bloco p, .analise-bloco li {
+            color: #23272f;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.1rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .analise-bloco ol, .analise-bloco ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .analise-bloco strong {
+            color: #FF69B4;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <header class="bg-gray-800 shadow-lg p-6">
+        <div class="container mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-black text-white uppercase animate-pulse">Diagnóstico Financeiro do Condomínio</h1>
+            <p class="text-lg text-blue-300">Condomínio Marselha | CNPJ: 54.104.653/0001-40</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <!-- ... (conteúdo existente do projeto) ... -->
+
+        <!-- ANALISE FINANCEIRA MARSELHA - TIMELINE SECTION -->
+        <section class="analise-timeline-section">
+            <div class="text-center">
+                <span class="analise-timeline-label">Análise Focada: Variação Drástica entre Abril e Maio de 2025</span>
+            </div>
+            <div class="timeline-arrow">
+                <svg viewBox="0 0 48 48">
+                    <path d="M24 8v32M24 40l-10-10M24 40l10-10" stroke="#FF69B4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="analise-bloco">
+                <h1>Análise Focada: Entendendo a Variação Drástica entre Abril e Maio de 2025</h1>
+                <h2>O que aconteceu? A Gangorra Financeira Explicada</h2>
+                <p>
+                  A grande variação entre o superávit de <strong>R$ 50.625,39</strong> em Abril e o déficit de <strong>-R$ 45.009,87</strong> em Maio não foi mágica. Foi o resultado de uma gestão que "empurrou com a barriga" grandes despesas de um mês para o outro. Essa prática cria uma falsa sensação de segurança em um mês, mas gera uma crise inevitável no mês seguinte.
+                </p>
+                <h3>Tabela Comparativa: Onde o Dinheiro Foi Gasto (ou Deixou de Ser Gasto)</h3>
+                <p>
+                  Para entender o que aconteceu, vamos comparar as principais despesas dos dois meses. Note como os valores mudam drasticamente.
+                </p>
+                <div class="overflow-x-auto">
+                  <table class="analise-table">
+                    <thead>
+                      <tr>
+                        <th>Categoria de Despesa</th>
+                        <th>Gasto em Abril/2025 (Mês do Superávit)</th>
+                        <th>Gasto em Maio/2025 (Mês do Déficit)</th>
+                        <th>Variação</th>
+                        <th>Análise Simplificada</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Água e Esgoto (SABESP)</td>
+                        <td>R$ 22.764,55</td>
+                        <td>R$ 98.429,98</td>
+                        <td>+332%</td>
+                        <td>Em Abril, pagou-se apenas parte da conta. Em Maio, pagaram a conta do mês e a parte que ficou faltando de Abril, resultando em uma despesa enorme.</td>
+                      </tr>
+                      <tr>
+                        <td>Limpeza e Portaria (KATECH)</td>
+                        <td>R$ 30.000,00</td>
+                        <td>R$ 61.963,23</td>
+                        <td>+106%</td>
+                        <td>O valor pago em Abril foi cerca de metade do valor normal. Em Maio, o pagamento voltou ao patamar elevado, sugerindo que parte do serviço de Abril pode ter sido paga em Maio.</td>
+                      </tr>
+                      <tr>
+                        <td>Manutenção Elevadores (OTIS)</td>
+                        <td>R$ 0,00</td>
+                        <td>R$ 16.130,43</td>
+                        <td>Aumento Infinito</td>
+                        <td>Nenhuma despesa de elevador foi paga em Abril. Em Maio, foi pago o valor mensal mais um "acordo" por mensalidades atrasadas. Ou seja, a conta de Abril foi empurrada e paga com juros em Maio.</td>
+                      </tr>
+                      <tr>
+                        <td>TOTAL GERAL DE DESPESAS</td>
+                        <td>R$ 157.146,20</td>
+                        <td>R$ 262.304,37</td>
+                        <td>+67%</td>
+                        <td>O condomínio gastou <strong>R$ 105.158,17 a mais</strong> em Maio do que em Abril.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <h3>Conclusão da Análise</h3>
+                <p>
+                  O superávit de Abril de 2025 não foi real. Ele só existiu porque a gestão anterior decidiu <strong>não pagar contas essenciais e de alto valor</strong> naquele mês, como a conta cheia da SABESP, o valor completo da KATECH e a manutenção dos elevadores.
+                </p>
+                <p>Essa decisão teve duas consequências graves:</p>
+                <ol>
+                  <li><strong>Criou uma "bomba-relógio"</strong>: As contas não pagas em Abril se acumularam e venceram em Maio, junto com as despesas normais daquele mês.</li>
+                  <li><strong>Gerou mais custos</strong>: O atraso no pagamento da manutenção dos elevadores, por exemplo, gerou a necessidade de um "acordo", o que quase sempre significa o pagamento de multas e juros. Ou seja, a manobra para criar um falso superávit acabou custando mais caro para o condomínio.</li>
+                </ol>
+                <p>
+                  <strong>Em resumo:</strong> o déficit de Maio foi o resultado direto e inevitável do represamento artificial de despesas em Abril. Essa prática demonstra uma total falta de planejamento financeiro e é a principal causa da instabilidade e do prejuízo acumulado.
+                </p>
+            </div>
+        </section>
+
+        <!-- Modal for full screen chart -->
+        <div id="modal-bg" class="modal-bg" tabindex="-1" aria-modal="true" role="dialog">
+            <div class="modal-content">
+                <button class="modal-close" type="button" id="modalCloseBtn" aria-label="Fechar">×</button>
+                <div class="modal-header">Gráfico Detalhado: Déficit vs. Superávit</div>
+                <div class="modal-chart-container">
+                    <canvas id="modalChart"></canvas>
+                </div>
+                <div class="text-center text-sm text-gray-400 mt-2">
+                    Vire o celular na horizontal para melhor visualização.
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-gray-800 text-center p-4 mt-8">
+        <p class="text-sm text-gray-500">&copy; 2025 Análise Gerada para o Condomínio Marselha. Todos os dados baseados nos relatórios financeiros de Julho de 2024 a Junho de 2025.</p>
+    </footer>
+    <script>
+        // Chart.js setup for index.html
+        const FONT_COLOR = '#E5E7EB';
+        const GRID_COLOR = '#4B5563';
+        const PALETTE = {
+            blue: '#0077B6',
+            orange: '#FF8C00',
+            yellow: '#FFD700',
+            pink: '#FF69B4',
+            teal: '#40E0D0',
+            gray: '#6B7280'
+        };
+
+        const monthlyDataOrig = [-83957.32, -75516.75, -60723.64, 1667.26, 13847.68, 5584.27, -6078.40, -8615.59, -8322.61, 50625.39, -45009.87, -551.81];
+        const backgroundColors = monthlyDataOrig.map(value => value >= 0 ? 'rgba(64, 224, 208, 0.6)' : 'rgba(255, 105, 180, 0.6)');
+        const borderColors = monthlyDataOrig.map(value => value >= 0 ? 'rgba(64, 224, 208, 1)' : 'rgba(255, 105, 180, 1)');
+
+        function drawChart(data) {
+            if (window.monthlyChart) window.monthlyChart.destroy();
+            window.monthlyChart = new Chart(document.getElementById('monthlyResultChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jul/24', 'Ago/24', 'Set/24', 'Out/24', 'Nov/24', 'Dez/24', 'Jan/25', 'Fev/25', 'Mar/25', 'Abr/25', 'Mai/25', 'Jun/25'],
+                    datasets: [{
+                        label: 'Resultado Mensal (R$)',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) label = label.join(' ');
+                                    return label;
+                                },
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            },
+                            backgroundColor: '#1F2937',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#D1D5DB',
+                            titleFont: { size: 16, weight: 'bold' },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 6,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: FONT_COLOR, 
+                                font: { size: 12 },
+                                callback: function(value, index, values) {
+                                    if (value >= 1000 || value <= -1000) {
+                                        return 'R$ ' + (value / 1000) + 'k';
+                                    }
+                                    return 'R$ ' + value;
+                                }
+                            },
+                            grid: { color: GRID_COLOR }
+                        },
+                        x: {
+                            ticks: { 
+                                color: FONT_COLOR, 
+                                font: { size: 12 }
+                            },
+                            grid: { color: 'transparent' }
+                        }
+                    }
+                }
+            });
+        }
+
+        drawChart(monthlyDataOrig);
+
+        // KPI Number Animation
+        function animateNumber(id, targetValue, prefix = '', duration = 1200) {
+            const el = document.getElementById(id);
+            let startTime = null, sign = targetValue < 0 ? '-' : '+';
+            targetValue = Math.abs(targetValue);
+            function format(val) {
+                return `${sign} R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            }
+            function tick(ts) {
+                if (!startTime) startTime = ts;
+                let progress = Math.min((ts - startTime) / duration, 1);
+                let val = Math.floor(progress * targetValue);
+                if (progress < 1) {
+                    el.textContent = format(val);
+                    requestAnimationFrame(tick);
+                } else {
+                    el.textContent = format(targetValue);
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            animateNumber("deficit-value", -288775.99, '-', 1500);
+            animateNumber("superavit-value", 71724.60, '+', 1500);
+            animateNumber("total-deficit-value", -217051.39, '-', 1500);
+
+            // Sparkle effect on KPI card hover
+            document.querySelectorAll('[data-sparkle]').forEach(card => {
+                card.addEventListener('mouseenter', function(e) {
+                    for (let i=0; i<6; i++) createSparkle(card);
+                });
+            });
+
+            // Chart overlay for tap/click
+            var chartOverlay = document.querySelector('.chart-overlay');
+            var openChartDetailBtn = document.getElementById('openChartDetailBtn');
+            var modalBg = document.getElementById('modal-bg');
+            var modalCloseBtn = document.getElementById('modalCloseBtn');
+            var modalChartCanvas = document.getElementById('modalChart');
+            let modalChartInstance = null;
+
+            function openChartModal() {
+                // Show modal
+                modalBg.classList.add('active');
+                // Destroy previous chart instance if needed
+                if (modalChartInstance) {
+                    modalChartInstance.destroy();
+                    modalChartInstance = null;
+                }
+                // Render enlarged chart in modal
+                modalChartInstance = new Chart(modalChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jul/24', 'Ago/24', 'Set/24', 'Out/24', 'Nov/24', 'Dez/24', 'Jan/25', 'Fev/25', 'Mar/25', 'Abr/25', 'Mai/25', 'Jun/25'],
+                        datasets: [{
+                            label: 'Resultado Mensal (R$)',
+                            data: monthlyDataOrig,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        if (Array.isArray(label)) label = label.join(' ');
+                                        return label;
+                                    },
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                },
+                                backgroundColor: '#1F2937',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#D1D5DB',
+                                titleFont: { size: 16, weight: 'bold' },
+                                bodyFont: { size: 14 },
+                                padding: 12,
+                                cornerRadius: 6,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { 
+                                    color: FONT_COLOR, 
+                                    font: { size: 16 },
+                                    callback: function(value, index, values) {
+                                        if (value >= 1000 || value <= -1000) {
+                                            return 'R$ ' + (value / 1000) + 'k';
+                                        }
+                                        return 'R$ ' + value;
+                                    }
+                                },
+                                grid: { color: GRID_COLOR }
+                            },
+                            x: {
+                                ticks: { 
+                                    color: FONT_COLOR, 
+                                    font: { size: 15 }
+                                },
+                                grid: { color: 'transparent' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function closeChartModal() {
+                modalBg.classList.remove('active');
+                if (modalChartInstance) {
+                    modalChartInstance.destroy();
+                    modalChartInstance = null;
+                }
+            }
+
+            // Button & overlay triggers modal
+            if (chartOverlay) {
+                chartOverlay.addEventListener('click', openChartModal);
+                chartOverlay.addEventListener('touchstart', function(e) { openChartModal(); e.preventDefault(); });
+            }
+            if (openChartDetailBtn) {
+                openChartDetailBtn.addEventListener('click', openChartModal);
+            }
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeChartModal);
+            }
+            // ESC key closes modal
+            document.addEventListener('keydown', function(e){
+                if (modalBg.classList.contains('active') && (e.key === "Escape" || e.key === "Esc")) {
+                    closeChartModal();
+                }
+            });
+            // Click outside modal closes
+            modalBg.addEventListener('click', function(e){
+                if (e.target === modalBg) {
+                    closeChartModal();
+                }
+            });
+        });
+
+        // Sparkle generator
+        function createSparkle(card) {
+            const sparkle = document.createElement('span');
+            sparkle.className = "sparkle";
+            sparkle.style.left = `${Math.random()*80+10}%`;
+            sparkle.style.top = `${Math.random()*60+20}%`;
+            sparkle.style.position = "absolute";
+            sparkle.style.width = "22px";
+            sparkle.style.height = "22px";
+            sparkle.style.background = "radial-gradient(circle, #FF69B4 60%, #40E0D0 100%)";
+            sparkle.style.borderRadius = "50%";
+            sparkle.style.opacity = "0.7";
+            card.appendChild(sparkle);
+            setTimeout(() => { sparkle.remove(); }, 1100);
+        }
+
+        // Interactive effect for attention cards and flowchart steps
+        document.querySelectorAll('[data-interactive]').forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                el.style.boxShadow = '0 8px 24px -6px #FFD700, 0 2px 8px -2px #FF69B4';
+                el.style.transform = 'scale(1.04)';
+            });
+            el.addEventListener('mouseleave', function() {
+                el.style.boxShadow = '';
+                el.style.transform = '';
+            });
+        });
+
+        // Global background transition on button click
+        document.querySelectorAll('.interactive-btn').forEach(function(btn){
+            btn.addEventListener('click', function() {
+                document.body.style.background = 'radial-gradient(ellipse at bottom right, #40E0D0 40%, #FF69B4 100%)';
+                setTimeout(() => {
+                    document.body.style.background = 'radial-gradient(ellipse at top left, #2d3748 60%, #1a202c 100%)';
+                }, 1200);
+            });
+        });
+
+        // Chart.js for pedalada.html (comparisonChart)
+        const PALETTE_PEDALADA = {
+            april: 'rgba(64, 224, 208, 0.8)', // Teal
+            may: 'rgba(255, 105, 180, 0.8)', // Pink
+            april_border: 'rgba(64, 224, 208, 1)',
+            may_border: 'rgba(255, 105, 180, 1)'
+        };
+        const comparisonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: FONT_COLOR,
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            }
+                            return label;
+                        },
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    },
+                    backgroundColor: '#1F2937',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#D1D5DB',
+                    titleFont: { size: 16, weight: 'bold' },
+                    bodyFont: { size: 14 },
+                    padding: 12,
+                    cornerRadius: 6,
+                    displayColors: true
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { 
+                        color: FONT_COLOR, 
+                        font: { size: 12 },
+                        callback: function(value, index, values) {
+                            if (value >= 1000 || value <= -1000) {
+                                return 'R$ ' + (value / 1000) + 'k';
+                            }
+                            return 'R$ ' + value;
+                        }
+                    },
+                    grid: { color: GRID_COLOR }
+                },
+                x: {
+                    ticks: { 
+                        color: FONT_COLOR, 
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    grid: { color: 'transparent' }
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(document.getElementById('comparisonChart')) {
+                new Chart(document.getElementById('comparisonChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Água e Esgoto', 'Limpeza/Portaria', 'Manut. Elevadores'],
+                        datasets: [
+                            {
+                                label: 'Gasto em Abril/25',
+                                data: [22764.55, 30000.00, 0],
+                                backgroundColor: PALETTE_PEDALADA.april,
+                                borderColor: PALETTE_PEDALADA.april_border,
+                                borderWidth: 2,
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Gasto em Maio/25',
+                                data: [98429.98, 61963.23, 16130.43],
+                                backgroundColor: PALETTE_PEDALADA.may,
+                                borderColor: PALETTE_PEDALADA.may_border,
+                                borderWidth: 2,
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: comparisonChartOptions
+                });
+            }
+        });
+    </script>
+</body>
+</html>
