@@ -249,7 +249,7 @@
             background: #40E0D0;
         }
         .modal-chart-container {
-            width: 100vw; /* allow max width on mobile */
+            width: 100vw;
             max-width: 700px;
             max-height: 70vh;
             height: 60vh;
@@ -265,6 +265,87 @@
                 max-height: 90vh;
                 height: 80vh;
             }
+        }
+        /* ANALISE FINANCEIRA BLOCOS */
+        .analise-timeline-section {
+            border-top: 6px solid #FF69B4;
+            border-radius: 0 0 1.5rem 1.5rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+            background: linear-gradient(120deg, #23272f 70%, #1a202c 100%);
+        }
+        .analise-timeline-label {
+            background: linear-gradient(90deg, #FF69B4 60%, #40E0D0 100%);
+            color: #1a202c;
+            font-weight: bold;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            display: inline-block;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 12px -2px #FF69B4, 0 1px 4px -1px #40E0D0;
+            margin-bottom: 2rem;
+        }
+        .analise-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0 2rem 0;
+            background: #f8fafd;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .analise-table th, .analise-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            font-size: 1rem;
+            text-align: left;
+        }
+        .analise-table th {
+            background: #40E0D0;
+            color: #1a202c;
+            font-weight: bold;
+        }
+        .analise-table tr:nth-child(even) td {
+            background: #f1f5f9;
+        }
+        .analise-table tr:nth-child(odd) td {
+            background: #f8fafd;
+        }
+        .analise-bloco {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            background: #fff;
+            color: #23272f;
+            border-radius: 1rem;
+            box-shadow: 0 6px 28px -6px #40E0D0;
+            padding: 2rem 1.5rem;
+        }
+        .analise-bloco h1, .analise-bloco h2, .analise-bloco h3 {
+            color: #FF69B4;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            margin-bottom: 1.25rem;
+        }
+        .analise-bloco h2 {
+            color: #40E0D0;
+            font-size: 1.5rem;
+        }
+        .analise-bloco h3 {
+            color: #FF69B4;
+            font-size: 1.25rem;
+        }
+        .analise-bloco p, .analise-bloco li {
+            color: #23272f;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.1rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .analise-bloco ol, .analise-bloco ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .analise-bloco strong {
+            color: #FF69B4;
         }
     </style>
 </head>
@@ -307,7 +388,7 @@
         <section id="volatility" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-white">Balanço Anual: Déficit vs. Superávit</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                O gráfico de colunas mostra a trajetória financeira do condomínio. Tivemos nove meses no vermelho (déficit) e apenas três no azul (superávit), que não foram suficientes para cobrir os prejuízos acumulados.
+                O gráfico de colunas mostra a trajetória financeira do condomínio. Tivemos nove meses no vermelho (déficit) e apenas três no azul (superávit), que não foram suficientes para cobrir os meses negativos.
             </p>
             <div class="chart-container" style="position:relative;">
                 <canvas id="monthlyResultChart"></canvas>
@@ -325,7 +406,7 @@
         <section id="red-flags" class="bg-gray-800 p-6 rounded-lg shadow-2xl mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-yellow-400">💡 Pontos de Atenção: Transações a Esclarecer</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                A análise dos últimos meses revela um padrão de pagamentos recorrentes e de alto valor a prestadores de serviço individuais. Essas transações, muitas vezes sem a clareza de contrato ou nota fiscal, indicam oportunidades para melhorar a governança financeira.
+                A análise dos últimos meses revela um padrão de pagamentos recorrentes e de alto valor a prestadores de serviço individuais. Essas transações, muitas vezes sem a clareza de contratos ou notas fiscais, merecem atenção e investigação detalhada.
             </p>
             <div class="space-y-4">
                 <div class="attention-card p-4 rounded-md flex items-center justify-between flex-wrap gap-4" data-interactive>
@@ -391,7 +472,7 @@
         <section id="kpis-pedalada" class="mb-12">
             <h2 class="text-3xl font-bold text-center mb-2 text-white">De um Extremo ao Outro</h2>
             <p class="text-center text-gray-400 max-w-3xl mx-auto mb-8">
-                A grande variação entre o superávit de Abril e o déficit de Maio não foi um acaso. Foi o resultado de um "empurrão com a barriga" de grandes despesas de um mês para o outro, criando um efeito artificial nos resultados.
+                A grande variação entre o superávit de Abril e o déficit de Maio não foi um acaso. Foi o resultado de um "empurrão com a barriga" de grandes despesas de um mês para o outro, criando uma ilusão de caixa positivo.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="kpi-card kpi-green p-6 rounded-lg shadow-xl text-center">
@@ -430,15 +511,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="conclusion-card p-6 rounded-lg shadow-xl">
                     <h3 class="text-2xl font-bold mb-4 text-orange-400 flex items-center"><span class="text-4xl mr-4">💣</span>"Bomba-Relógio" Ativada</h3>
-                    <p class="text-gray-300">As contas não pagas em Abril se acumularam e venceram em Maio, junto com as despesas normais daquele mês. Isso causou o rombo nas contas, pois o caixa não suportou o impacto.</p>
+                    <p class="text-gray-300">As contas não pagas em Abril se acumularam e venceram em Maio, junto com as despesas normais daquele mês. Isso causou o rombo nas contas, pois o caixa não estava preparado para o acúmulo.</p>
                 </div>
                 <div class="conclusion-card p-6 rounded-lg shadow-xl">
                     <h3 class="text-2xl font-bold mb-4 text-red-400 flex items-center"><span class="text-4xl mr-4">💸</span>Custos Adicionais Gerados</h3>
-                    <p class="text-gray-300">O atraso no pagamento da manutenção dos elevadores, por exemplo, gerou a necessidade de um "acordo" de R$ 4.109,74. Acordos quase sempre significam o pagamento de juros e taxas extras.</p>
+                    <p class="text-gray-300">O atraso no pagamento da manutenção dos elevadores, por exemplo, gerou a necessidade de um "acordo" de R$ 4.109,74. Acordos quase sempre significam o pagamento de juros, multas e encargos.</p>
                 </div>
             </div>
             <p class="text-center text-gray-300 max-w-3xl mx-auto mt-8 text-lg bg-gray-800 p-4 rounded-lg">
-                Em resumo: o déficit de Maio foi o resultado direto e inevitável do represamento artificial de despesas em Abril. Essa prática demonstra uma total falta de planejamento financeiro e transparência.
+                Em resumo: o déficit de Maio foi o resultado direto e inevitável do represamento artificial de despesas em Abril. Essa prática demonstra uma total falta de planejamento financeiro e coloca em risco a saúde do condomínio.
             </p>
         </section>
 
@@ -455,6 +536,85 @@
                 </div>
             </div>
         </div>
+
+        <!-- BEGIN: Focused Analysis Section (analise_focada.html) -->
+        <section class="analise-timeline-section">
+            <div class="text-center">
+                <span class="analise-timeline-label">Análise Focada: Variação Drástica entre Abril e Maio de 2025</span>
+            </div>
+            <div class="timeline-arrow">
+                <svg viewBox="0 0 48 48">
+                    <path d="M24 8v32M24 40l-10-10M24 40l10-10" stroke="#FF69B4" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="analise-bloco">
+                <h1>Análise Focada: Entendendo a Variação Drástica entre Abril e Maio de 2025</h1>
+                <h2>O que aconteceu? A Gangorra Financeira Explicada</h2>
+                <p>
+                  A grande variação entre o superávit de <strong>R$ 50.625,39</strong> em Abril e o déficit de <strong>-R$ 45.009,87</strong> em Maio não foi mágica. Foi o resultado de uma gestão que represou despesas essenciais em Abril e concentrou o pagamento das contas em Maio, criando uma falsa sensação de saldo positivo.
+                </p>
+                <h3>Tabela Comparativa: Onde o Dinheiro Foi Gasto (ou Deixou de Ser Gasto)</h3>
+                <p>
+                  Para entender o que aconteceu, vamos comparar as principais despesas dos dois meses. Note como os valores mudam drasticamente.
+                </p>
+                <div class="overflow-x-auto">
+                  <table class="analise-table">
+                    <thead>
+                      <tr>
+                        <th>Categoria de Despesa</th>
+                        <th>Gasto em Abril/2025 (Mês do Superávit)</th>
+                        <th>Gasto em Maio/2025 (Mês do Déficit)</th>
+                        <th>Variação</th>
+                        <th>Análise Simplificada</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Água e Esgoto (SABESP)</td>
+                        <td>R$ 22.764,55</td>
+                        <td>R$ 98.429,98</td>
+                        <td>+332%</td>
+                        <td>Em Abril, pagou-se apenas parte da conta. Em Maio, pagaram a conta do mês e a parte que ficou faltando de Abril, resultando em uma despesa enorme.</td>
+                      </tr>
+                      <tr>
+                        <td>Limpeza e Portaria (KATECH)</td>
+                        <td>R$ 30.000,00</td>
+                        <td>R$ 61.963,23</td>
+                        <td>+106%</td>
+                        <td>O valor pago em Abril foi cerca de metade do valor normal. Em Maio, o pagamento voltou ao patamar elevado, sugerindo que parte do serviço de Abril pode ter sido paga em Maio.</td>
+                      </tr>
+                      <tr>
+                        <td>Manutenção Elevadores (OTIS)</td>
+                        <td>R$ 0,00</td>
+                        <td>R$ 16.130,43</td>
+                        <td>Aumento Infinito</td>
+                        <td>Nenhuma despesa de elevador foi paga em Abril. Em Maio, foi pago o valor mensal mais um "acordo" por mensalidades atrasadas. Ou seja, a conta de Abril foi empurrada e paga juntamente com a de Maio.</td>
+                      </tr>
+                      <tr>
+                        <td>TOTAL GERAL DE DESPESAS</td>
+                        <td>R$ 157.146,20</td>
+                        <td>R$ 262.304,37</td>
+                        <td>+67%</td>
+                        <td>O condomínio gastou <strong>R$ 105.158,17 a mais</strong> em Maio do que em Abril.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <h3>Conclusão da Análise</h3>
+                <p>
+                  O superávit de Abril de 2025 não foi real. Ele só existiu porque a gestão anterior decidiu <strong>não pagar contas essenciais e de alto valor</strong> naquele mês, como a conta de água e a manutenção dos elevadores.
+                </p>
+                <p>Essa decisão teve duas consequências graves:</p>
+                <ol>
+                  <li><strong>Criou uma "bomba-relógio"</strong>: As contas não pagas em Abril se acumularam e venceram em Maio, junto com as despesas normais daquele mês.</li>
+                  <li><strong>Gerou mais custos</strong>: O atraso no pagamento da manutenção dos elevadores, por exemplo, gerou a necessidade de um "acordo", o que quase sempre significa o pagamento de juros, multas ou encargos extras.</li>
+                </ol>
+                <p>
+                  <strong>Em resumo:</strong> o déficit de Maio foi o resultado direto e inevitável do represamento artificial de despesas em Abril. Essa prática demonstra uma total falta de planejamento financeiro e coloca em risco a saúde do condomínio.
+                </p>
+            </div>
+        </section>
+        <!-- END: Focused Analysis Section -->
 
     </main>
 
